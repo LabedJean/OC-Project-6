@@ -4,26 +4,26 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const passwordValidator = require("../middleware/password-validator");
 
-// Crée un nouvel utilisateur
+// Create new User
 exports.signup = (req, res) => {
-  if (passwordValidator.validate(req.body.password)) { // Si le mot de passe est validé par password-validator
-    bcrypt.hash(req.body.password, 10) // Hashe et sale 10 fois le mot de passe récupéré dans la requête
+  if (passwordValidator.validate(req.body.password)) { // Password does pass validator
+    bcrypt.hash(req.body.password, 10) // Hash password
       .then(hash => {
         const user = new User({
           email: req.body.email,
           password: hash,
         });
-        user.save() // Enregistre l'utilisateur dans la base de données
+        user.save() // Save user
           .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
           .catch(() => res.status(400).json({ message: "Il existe déjà un utilisateur avec cette adresse email." }));
       })
       .catch(error => res.status(500).json({ error }));
-  } else { // Si le mot de passe n'est pas validé par password-validator
+  } else { // Password does not pass validator
     res.status(400).json({ message: "Votre mot de passe doit contenir entre 8 et 30 caractères et comporter au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial." });
   }
 };
 
-// Connecte un utilisateur
+// Login User
 exports.login = (req, res) => {
   User.findOne({ email: req.body.email })
     .then(user => {
@@ -39,7 +39,7 @@ exports.login = (req, res) => {
             userId: user._id,
             token: jwt.sign(
               { userId: user._id },
-              process.env.TOKEN_SECRET_KEY, // node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
+              process.env.TOKEN_SECRET_KEY,
               { expiresIn: "24h" },
             ),
           });

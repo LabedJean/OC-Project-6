@@ -5,7 +5,7 @@ const sauceCtrl = require("../controllers/sauce");
 
 const router = express.Router();
 
-// Gestion des verbes HTTP
+// Routing
 router.post("/", auth, multer, sauceCtrl.createSauce); // Crée une nouvelle sauce
 router.get("/", auth, sauceCtrl.getAllSauces); // Récupère toutes les sauces
 router.get("/:id", auth, sauceCtrl.getOneSauce); // Récupère une sauce précise
